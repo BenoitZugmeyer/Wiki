@@ -1,0 +1,50 @@
+==========
+Main title
+==========
+
+--------
+Subtitle
+--------
+
+
+
+Titre 1
+=======
+
+This is a core example:
+
+.. sourcecode:: python
+
+    if __name__ == '__main__':
+        print('plop')
+
+
+Titre 2
+-------
+
+Lorem Elsass ipsum amet flammekueche__ sit in, sit leo messti de Bischheim semper quam, Racing. munster mänele vulputate hoplageiss hopla Mauris hop rhoncus jetz gehts los mollis ante elementum barapli Morbi libero, id picon bière ornare eget dolor lacus ftomi!.
+
+Pellentesque sed geht's Richard Schirmeck turpis, Oberschaeffolsheim aliquam knepfle bredele gal DNA, lotto-owe Huguette hopla s'guelt auctor, ac hopla chambon Salu bissame kuglopf Hans vielmols.
+
+Chulien Heineken Miss Dahlias dui sed condimentum kartoffelsalad tristique Strasbourg commodo Kabinetpapier wurscht placerat salu gravida Oberschaeffolsheim eleifend elit consectetur amet ornare wie ullamcorper non amet, Christkindelsmärik libero. risus, nüdle schpeck sit Gal.
+
+Titre 3
+'''''''
+
+Pellentesque sed geht's Richard Schirmeck turpis, Oberschaeffolsheim aliquam knepfle bredele gal DNA, lotto-owe Huguette hopla s'guelt auctor, ac hopla chambon Salu bissame kuglopf Hans vielmols.
+
+Chulien Heineken Miss Dahlias dui sed condimentum kartoffelsalad tristique Strasbourg commodo Kabinetpapier wurscht placerat salu gravida Oberschaeffolsheim eleifend elit consectetur amet ornare wie ullamcorper non amet, Christkindelsmärik libero. risus, nüdle schpeck sit Gal.
+
+Titre 4
+~~~~~~~
+
+Pellentesque sed geht's Richard Schirmeck turpis, Oberschaeffolsheim aliquam knepfle bredele gal DNA, lotto-owe Huguette hopla s'guelt auctor, ac hopla chambon Salu bissame kuglopf Hans vielmols.
+
+Titre 5
+.......
+
+Chulien Heineken Miss Dahlias dui sed condimentum.
+
+
+
+.. __: /plop

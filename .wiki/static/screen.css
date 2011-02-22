@@ -1,0 +1,108 @@
+
+/* Reset CSS */
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+blockquote, q { quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after { content: ''; content: none; }
+
+ins { background-color: #ff9; color: #000; text-decoration: none; }
+
+mark { background-color: #ff9; color: #000; font-style: italic; font-weight: bold; }
+
+del { text-decoration: line-through; }
+
+abbr[title], dfn[title] { border-bottom: 1px dotted; cursor: help; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+
+hr { display: block; height: 1px; border: 0; border-top: 1px solid #ccc; margin: 1em 0; padding: 0; }
+
+input, select { vertical-align: middle; }
+
+textarea { overflow: auto; } /* www.sitepoint.com/blogs/2010/08/20/ie-remove-textarea-scrollbars/ */
+
+body, select, input, textarea {
+    color: #333;
+    /* Set your base font here, to apply evenly */
+    font-family: Georgia, serif;
+    font-size: 10pt;
+    line-height: 1.4em;
+}
+textarea { font-family: monospace; }
+
+h1, h2, h3, h4, h5 { font-weight: bold; margin: 1em 0 0.3em 1em; }
+h1 { font-size: 2em; }
+h2 { font-size: 1.618em; }
+h3 { font-size: 1.382em; }
+h4 { font-size: 1.236em; }
+h5 { font-size: 1.146em; }
+
+h1.title, h2.subtitle { text-align: center; }
+h2.subtitle { font-style: italic; font-weight: normal; margin-top: 0; }
+
+a {
+    color: #333; text-decoration: none; border-bottom: 1px solid #aaa;
+}
+a:hover, a:focus { color: #000; border-color: #000; outline: none; }
+
+p { margin: 0 0 0.7em 0; }
+
+em { font-style: italic; }
+
+.body {
+    width: 583px;
+    margin: 0 auto;
+}
+
+.error {
+    background-color: #a00;
+    color: #fff;
+    padding: 5px 8px;
+}
+
+#editform textarea {
+    font-size: 10px;
+    line-height: 12px;
+    height: 360px;
+    width: 583px;
+    padding: 5px 8px;
+    border: 1px solid black;
+    border: none rgba(0,0,0,0);
+    -moz-box-shadow: 0 0 5px #000;
+    resize: vertical;
+}
+
+#editform {
+    margin: 0 auto;
+    display: block;
+    text-align: right;
+    width: 599px;
+}
+
+#editform input[type=submit] {
+    border: none;
+    background: none;
+    font-weight: bold;
+}
