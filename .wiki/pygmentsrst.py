@@ -43,14 +43,18 @@ INLINESTYLES = True
 
 from pygments.formatters import HtmlFormatter
 
+from pygments.styles import STYLE_MAP
+
 # The default formatter
 DEFAULT = HtmlFormatter(noclasses=INLINESTYLES)
 
 # Add name -> formatter pairs for every variant you want to use
 VARIANTS = {
-    # 'linenos': HtmlFormatter(noclasses=INLINESTYLES, linenos=True),
+    'linenos': HtmlFormatter(noclasses=INLINESTYLES, linenos=True),
 }
 
+for style in STYLE_MAP.keys():
+    VARIANTS[style] = HtmlFormatter(noclasses=INLINESTYLES, style=style)
 
 from docutils import nodes
 from docutils.parsers.rst import directives, Directive

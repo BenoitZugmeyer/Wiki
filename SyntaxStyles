@@ -1,0 +1,269 @@
+=============
+Syntax styles
+=============
+
+
+.. sourcecode:: python
+
+    class Plop(object):
+        """ default """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+.. sourcecode:: python
+    :autumn:
+
+    class Plop(object):
+        """ autumn """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :borland:
+
+    class Plop(object):
+        """ borland """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :bw:
+
+    class Plop(object):
+        """ bw """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :colorful:
+
+    class Plop(object):
+        """ colorful """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :default:
+
+    class Plop(object):
+        """ default """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :emacs:
+
+    class Plop(object):
+        """ emacs """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :friendly:
+
+    class Plop(object):
+        """ friendly """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :fruity:
+
+    class Plop(object):
+        """ fruity """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :manni:
+
+    class Plop(object):
+        """ manni """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :monokai:
+
+    class Plop(object):
+        """ monokai """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :murphy:
+
+    class Plop(object):
+        """ murphy """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :native:
+
+    class Plop(object):
+        """ native """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :pastie:
+
+    class Plop(object):
+        """ pastie """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :perldoc:
+
+    class Plop(object):
+        """ perldoc """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :tango:
+
+    class Plop(object):
+        """ tango """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :trac:
+
+    class Plop(object):
+        """ trac """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :vim:
+
+    class Plop(object):
+        """ vim """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
+.. sourcecode:: python
+    :vs:
+
+    class Plop(object):
+        """ vs """
+        def __init__(self, binz):
+            self.binz = binz  # truc
+            print binz
+            raise Exception('Bouyah')
+
+    if __name__ == '__main__':
+        print('plop' + 12)
+
+
