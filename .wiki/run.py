@@ -57,6 +57,9 @@ def render_template(name, vars={}):
 
 
 def render_rst(content):
+    if content is None:
+        return {'file_title': None, 'file_subtitle': None,
+            'file_content': None, 'error_count': 0}
     # http://docutils.sourceforge.net/docs/howto/security.html
     heightened_security_settings = {'file_insertion_enabled': 0,
                                     'raw_enabled': 0}
@@ -64,10 +67,18 @@ def render_rst(content):
     parts = docutils.core.publish_parts(source=content, writer_name='html',
         settings_overrides=heightened_security_settings)
 
+    # replaces errors
+    content, error_count = \
+        re.subn(r'(<div class="system-message"(?: id="id\d*?")?>)\n' \
+            r'.*?\(.*?((?: line \d+)?)\)((?:; <em>.*?</em>)?)</p>\n' \
+            r'(.*?)(</div>)',
+            r'\1Error\2\3: \4\5', parts['fragment'], 0, re.S)
+
     return {
         'file_title': parts['title'],
         'file_subtitle': parts['subtitle'],
-        'file_content': parts['fragment']}
+        'file_content': content,
+        'error_count': error_count}
 
 
 def parse_post(environment):
@@ -149,25 +160,25 @@ def read_file(file_path):
 
 
 def command_view(localfile_path, file_name, **kwargs):
-    file_content = read_file(localfile_path)
-    file_exists = file_content is not None
-    rendered = render_rst(file_content) if file_exists else {}
-    rendered.update({'file_exists': file_exists})
-    return rendered
+    return render_rst(read_file(localfile_path))
 
 
-def command_edit(localfile_path, header, file_path, content=None, **kwargs):
+def command_edit(localfile_path, header, file_path, content=None,
+    preview=False, **kwargs):
+
+    rendered = render_rst(content)
     if content is not None:
-        with open(localfile_path, 'wb') as fp:
-            fp.write(content)
-        header['status'] = '302 Found'
-        header['Location'] = file_path
+        if not rendered['error_count'] and not preview:
+            with open(localfile_path, 'wb') as fp:
+                fp.write(content)
+            header['status'] = '302 Found'
+            header['Location'] = file_path
+            return ''
+    else:
+        content = read_file(localfile_path)
+    rendered['content'] = content
 
-    file_content = read_file(localfile_path)
-    file_exists = file_content is not None
-    return {
-        'file_exists': file_exists,
-        'file_content': file_content or ''}
+    return rendered
 
 
 def command_static(*file_path, **kwargs):
@@ -189,6 +200,7 @@ def command_static(*file_path, **kwargs):
 
 import bjoern
 try:
+    print "Start..."
     bjoern.run(application, '0.0.0.0', 8080)
 except:
     pass

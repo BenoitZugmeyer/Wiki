@@ -6,17 +6,13 @@ Main title
 Subtitle
 --------
 
-
-
 Titre 1
 =======
 
-This is a core example:
+Here is a list of `Syntax Styles`__.
 
-.. sourcecode:: python
+Here is an example of `page container errors`__.
 
-    if __name__ == '__main__':
-        print('plop')
 
 
 Titre 2
@@ -47,4 +43,6 @@ Chulien Heineken Miss Dahlias dui sed condimentum.
 
 
 
-.. __: /plop
+.. __: /SyntaxStyles
+.. __: /Errors
+.. __: /Plop

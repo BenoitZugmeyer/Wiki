@@ -76,11 +76,26 @@ em { font-style: italic; }
     margin: 0 auto;
 }
 
+.highlighttable,
+.highlight {
+    margin: 0.5em 0;
+}
+
+.highlighttable { width: 100%; }
+.highlighttable td { width: 0; }
+.highlighttable td.code { width: 100%; }
+
+.system-message a { color: #fff; }
+.system-message,
 .error {
     background-color: #a00;
     color: #fff;
     padding: 5px 8px;
 }
+
+.problematic { color: #a00; font-weight: bold; }
+
+.system-messages h1 { display: none; }
 
 #editform textarea {
     font-size: 10px;
@@ -101,8 +116,8 @@ em { font-style: italic; }
     width: 599px;
 }
 
-#editform input[type=submit] {
-    border: none;
-    background: none;
-    font-weight: bold;
-}
+#editform input[type=submit] { border: none; background: none; }
+#editform input[type=submit][value=Submit] { font-weight: bold; }
+
+#preview { margin: 30px auto; }
+#preview .content { background-color: #eee; border: 1px solid transparent; }
