@@ -45,12 +45,21 @@ textarea { overflow: auto; } /* www.sitepoint.com/blogs/2010/08/20/ie-remove-tex
 
 body, select, input, textarea {
     color: #333;
-    /* Set your base font here, to apply evenly */
-    font-family: Georgia, serif;
+    font-family: "Century Schoolbook L",
+        Georgia,
+        "American Typewriter",
+        serif;
     font-size: 10pt;
     line-height: 1.4em;
 }
-textarea { font-family: monospace; }
+textarea { font-family: "DejaVu Sans Mono",
+             "Bitstream Vera Sans Mono",
+             "Vera Sans Mono",
+             "Lucida Console",
+             Consolas,
+             Monaco,
+             "Lucida Sans Typewriter",
+             monospace; }
 
 h1, h2, h3, h4, h5 { font-weight: bold; margin: 1em 0 0.3em 1em; }
 h1 { font-size: 2em; }

@@ -3,6 +3,7 @@ inherits ('global') [
     override ('content') [
         h1 [ 'Error' ],
         message,
-        test (exception) and pre (class_='error') [ exception ]
+        test (exception) and pre (class_='error') [ exception ],
+        a (href=url(file_path)) ['Back'],
     ]
 ]

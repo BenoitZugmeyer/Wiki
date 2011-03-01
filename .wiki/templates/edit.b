@@ -5,13 +5,13 @@ inherits ( 'global' ) [
         test (file_content is not None) and div (id='preview') [
             include ('display_file'),
         ],
-        form (id='editform', method='post', action=urlescape(file_path)+'.edit') [
+        form (id='editform', method='post', action=url(file_path, 'edit')) [
             textarea (name='content') [ content or '' ],
             input ( type='submit', name='preview', value='Preview' ),
             input ( type='submit', value='Submit' ),
         ],
     ],
     override ( 'menu' ) [
-        a (href=urlescape(file_path)) [ 'Back' ],
+        a (href=url(file_path)) [ 'Back' ],
     ]
 ]

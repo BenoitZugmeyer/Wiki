@@ -6,109 +6,49 @@
 
 import pprint
 import os
-import os.path
 import sys
 import urllib
 import urlparse
 import mimetypes
 import re
 import traceback
-import docutils.core
-
-import pygmentsrst
-
-import breve
-import breve.tags.html
-
-root_path = os.path.abspath(os.path.dirname(__file__))
-repository_path = os.path.abspath(os.path.join(root_path, '..'))
-templates_path = os.path.join(root_path, 'templates')
-static_path = os.path.join(root_path, 'static')
-index_name = 'Index'
 
 
-def droptags(str):
-    return re.sub("< */? *\w+ */?\ *>", "", str)
+import lib
 
-breve.register_global('urlescape', urllib.quote)
-breve.register_global('droptags', droptags)
+import conf
 
 
-html_escape_table = {
-    "&": "&amp;",
-    '"': "&quot;",
-    "'": "&apos;",
-    ">": "&gt;",
-    "<": "&lt;",
-    }
-
-
-def html_escape(text):
-    return "".join(html_escape_table.get(c, c) for c in text)
-
-
-def render_template(name, vars={}):
-    template = breve.Template(breve.tags.html.tags,
-        tidy=True,
-        debug=True,
-        root=templates_path,
-        doctype='<!DOCTYPE html>')
-    return template.render(name, vars).encode('UTF-8')
-
-
-def render_rst(content):
-    if content is None:
-        return {'file_title': None, 'file_subtitle': None,
-            'file_content': None, 'error_count': 0}
-    # http://docutils.sourceforge.net/docs/howto/security.html
-    heightened_security_settings = {'file_insertion_enabled': 0,
-                                    'raw_enabled': 0}
-    # http://docutils.sourceforge.net/docs/api/publisher.html
-    parts = docutils.core.publish_parts(source=content, writer_name='html',
-        settings_overrides=heightened_security_settings)
-
-    # replaces errors
-    content, error_count = \
-        re.subn(r'(<div class="system-message"(?: id="id\d*?")?>)\n' \
-            r'.*?\(.*?((?: line \d+)?)\)((?:; <em>.*?</em>)?)</p>\n' \
-            r'(.*?)(</div>)',
-            r'\1Error\2\3: \4\5', parts['fragment'], 0, re.S)
-
-    return {
-        'file_title': parts['title'],
-        'file_subtitle': parts['subtitle'],
-        'file_content': content,
-        'error_count': error_count}
-
-
-def parse_post(environment):
-    if environment['REQUEST_METHOD'] != 'POST':
-        return {}
-    raw = environment['wsgi.input'].read() \
-        .split('&')
+def parse_kwargs(environment):
+    if environment['REQUEST_METHOD'] == 'POST':
+        raw = environment['wsgi.input'].read()
+    else:
+        #raw = environment.get('QUERY_STRING', '')
+        raw = ''
     return dict([urllib.unquote_plus(p) for p in s.partition('=')[::2]]
-        for s in raw)
+        for s in raw.split('&'))
 
 
 def application(environment, response):
-    file_path, command_name = environment['PATH_INFO'].partition('.')[::2]
+    file_path = environment['PATH_INFO']
     method = environment['REQUEST_METHOD']
+    command = environment.get('QUERY_STRING', '')
 
     file_path = file_path.rstrip('/')
-    localfile_path = os.path.join(repository_path,
+    localfile_path = os.path.join(conf.repository_path,
         file_path.lstrip('/').replace('/', os.sep))
 
     if os.path.isdir(localfile_path):
-        file_path = '/'.join((file_path, index_name))
-        localfile_path = os.path.join(localfile_path, index_name)
+        file_path = '/'.join((file_path, conf.index_name))
+        localfile_path = os.path.join(localfile_path, conf.index_name)
 
-    command_kwargs = parse_post(environment)
+    command_kwargs = parse_kwargs(environment)
 
-    if not command_name:
+    if not command:
         command_name = 'view'
         command_args = []
     else:
-        command_args = command_name.split('/')
+        command_args = command.split('&')
         command_name = command_args.pop(0)
 
     header = {
@@ -130,26 +70,21 @@ def application(environment, response):
 
 
 def run(name, *args, **kwargs):
-    command = globals().get('command_' + name)
+    command = get_command(name)
     if command:
         try:
             result = command(*args, **kwargs)
         except TypeError, e:
-            return run('error', message='Arguments error')
+            return run('error', message='Arguments error', **kwargs)
 
         if result is None or isinstance(result, dict):
             if result:
                 kwargs.update(result)
-            result = render_template(name, kwargs)
+            result = lib.render_template(name, kwargs)
     else:
         result = run('error',
-            message='Command "{0}" not found'.format(html_escape(name)))
+            message='Command "{0}" not found'.format(lib.html_escape(name)), **kwargs)
     return result
-
-
-def command_error(message, exception=None, **kwargs):
-    return {'exception': sys.exc_info()[0] and traceback.format_exc()}
-
 
 def read_file(file_path):
     result = None
@@ -159,15 +94,30 @@ def read_file(file_path):
     return result
 
 
-def command_view(localfile_path, file_name, **kwargs):
-    return render_rst(read_file(localfile_path))
+_commands = {}
+
+def command(fct):
+    _commands[fct.__name__] = fct
+    return fct
+
+def get_command(name):
+    return _commands.get(name)
 
 
-def command_edit(localfile_path, header, file_path, content=None,
-    preview=False, **kwargs):
+@command
+def error(message, exception=None, **_):
+    return {'exception': sys.exc_info()[0] and traceback.format_exc()}
 
-    rendered = render_rst(content)
-    if content is not None:
+@command
+def view(localfile_path, **_):
+    return lib.render_content(read_file(localfile_path))
+
+@command
+def edit(localfile_path, header, file_path, method,
+    content=None, preview=False, **_):
+
+    rendered = lib.render_content(content)
+    if content is not None and method == 'POST':
         if not rendered['error_count'] and not preview:
             with open(localfile_path, 'wb') as fp:
                 fp.write(content)
@@ -180,14 +130,14 @@ def command_edit(localfile_path, header, file_path, content=None,
 
     return rendered
 
-
-def command_static(*file_path, **kwargs):
+@command
+def static(*file_path, **kwargs):
     header = kwargs['header']
     if not file_path or '..' in file_path:
         header['status'] = '403 Forbidden'
-        return run('error', 'Forbidden')
+        return run('error', message='Forbidden', **kwargs)
 
-    content = read_file(os.path.join(static_path, *file_path))
+    content = read_file(os.path.join(conf.static_path, *file_path))
     if content is None:
         header['status'] = '404 Not found'
         return run('error',
@@ -197,10 +147,14 @@ def command_static(*file_path, **kwargs):
     header['Content-Type'] = mimetypes.guess_type(file_path[-1])[0]
     return content
 
+def launch(address, port):
+    import bjoern
+    bjoern.run(application, address, port)
 
-import bjoern
-try:
-    print "Start..."
-    bjoern.run(application, '0.0.0.0', 8080)
-except:
-    pass
+if __name__ == '__main__':
+    try:
+        print "Start..."
+        launch('0.0.0.0', 8080)
+    except Exception, e:
+        print e
+
