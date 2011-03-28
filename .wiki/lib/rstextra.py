@@ -4,6 +4,7 @@ import pygmentsrst
 import sys
 import re
 
+
 def render_content(content):
     if content is None:
         return {'file_title': None, 'file_subtitle': None,

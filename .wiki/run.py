@@ -83,8 +83,10 @@ def run(name, *args, **kwargs):
             result = lib.render_template(name, kwargs)
     else:
         result = run('error',
-            message='Command "{0}" not found'.format(lib.html_escape(name)), **kwargs)
+            message='Command "{0}" not found'.format(lib.html_escape(name)),
+            **kwargs)
     return result
+
 
 def read_file(file_path):
     result = None
@@ -96,9 +98,11 @@ def read_file(file_path):
 
 _commands = {}
 
+
 def command(fct):
     _commands[fct.__name__] = fct
     return fct
+
 
 def get_command(name):
     return _commands.get(name)
@@ -108,9 +112,11 @@ def get_command(name):
 def error(message, exception=None, **_):
     return {'exception': sys.exc_info()[0] and traceback.format_exc()}
 
+
 @command
 def view(localfile_path, **_):
     return lib.render_content(read_file(localfile_path))
+
 
 @command
 def edit(localfile_path, header, file_path, method,
@@ -130,6 +136,7 @@ def edit(localfile_path, header, file_path, method,
 
     return rendered
 
+
 @command
 def static(*file_path, **kwargs):
     header = kwargs['header']
@@ -147,9 +154,11 @@ def static(*file_path, **kwargs):
     header['Content-Type'] = mimetypes.guess_type(file_path[-1])[0]
     return content
 
+
 def launch(address, port):
     import bjoern
     bjoern.run(application, address, port)
+
 
 if __name__ == '__main__':
     try:
@@ -157,4 +166,3 @@ if __name__ == '__main__':
         launch('0.0.0.0', 8080)
     except Exception, e:
         print e
-
