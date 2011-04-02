@@ -19,20 +19,30 @@ import lib
 import conf
 
 
-def parse_kwargs(environment):
+def parse_urlencoded(raw, args, kwargs):
+    if not raw:
+        return
+    for cpl in raw.split('&'):
+        name, sep, value = cpl.partition('=')
+        name = urllib.unquote_plus(name)
+        if sep:
+            kwargs[name] = urllib.unquote_plus(value)
+        else:
+            args.append(name)
+
+
+def parse_input(environment):
+    args = []
+    kwargs = {}
+    parse_urlencoded(environment.get('QUERY_STRING', ''), args, kwargs)
     if environment['REQUEST_METHOD'] == 'POST':
-        raw = environment['wsgi.input'].read()
-    else:
-        #raw = environment.get('QUERY_STRING', '')
-        raw = ''
-    return dict([urllib.unquote_plus(p) for p in s.partition('=')[::2]]
-        for s in raw.split('&'))
+        parse_urlencoded(environment['wsgi.input'].read(), args, kwargs)
+    return args, kwargs
 
 
 def application(environment, response):
     file_path = environment['PATH_INFO']
     method = environment['REQUEST_METHOD']
-    command = environment.get('QUERY_STRING', '')
 
     file_path = file_path.rstrip('/')
     localfile_path = os.path.join(conf.repository_path,
@@ -42,27 +52,20 @@ def application(environment, response):
         file_path = '/'.join((file_path, conf.index_name))
         localfile_path = os.path.join(localfile_path, conf.index_name)
 
-    command_kwargs = parse_kwargs(environment)
-
-    if not command:
-        command_name = 'view'
-        command_args = []
-    else:
-        command_args = command.split('&')
-        command_name = command_args.pop(0)
+    command_args, command_kwargs = parse_input(environment)
 
     header = {
         'status': '200 OK',
         'Content-Type': 'text/html'}
 
     body = run(
-        command_name,
+        command_args[0] if command_args else 'view',
         header=header,
         file_path=file_path,
         localfile_path=localfile_path,
         file_name=os.path.basename(localfile_path),
         method=method,
-        *command_args,
+        arguments=command_args,
         **command_kwargs)
 
     response(header.pop('status'), header.items())
@@ -138,20 +141,22 @@ def edit(localfile_path, header, file_path, method,
 
 
 @command
-def static(*file_path, **kwargs):
-    header = kwargs['header']
+@command
+def static(header, arguments, **_):
+    file_path = arguments[1]
     if not file_path or '..' in file_path:
         header['status'] = '403 Forbidden'
         return run('error', message='Forbidden', **kwargs)
 
-    content = read_file(os.path.join(conf.static_path, *file_path))
+    content = read_file(
+        os.path.join(conf.static_path, file_path.replace('/', os.sep)))
     if content is None:
         header['status'] = '404 Not found'
         return run('error',
-            message='File "{0}" not found'.format('/'.join(file_path)),
-            **kwargs)
+            message='File "{0}" not found'.format(file_path),
+            **_)
 
-    header['Content-Type'] = mimetypes.guess_type(file_path[-1])[0]
+    header['Content-Type'] = mimetypes.guess_type(file_path)[0]
     return content
 
 
