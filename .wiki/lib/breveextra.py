@@ -4,6 +4,8 @@ import breve.tags.html
 import re
 import urllib
 
+import datetime
+
 import conf
 
 
@@ -31,6 +33,57 @@ def url(file='', action=None):
 @breve_global
 def static(file):
     return url(action=['static', file])
+
+
+@breve_global
+def format_date(d):
+    if isinstance(d, int) or isinstance(d, float):
+        d = datetime.datetime.fromtimestamp(d)
+    now = datetime.datetime.today()
+    absolute = d.strftime(
+        '%m-%d-%y %H:%M' if now.year != d.year else
+        '%m-%d %H:%M' if now.month != d.month or now.day != d.day else
+        '%H:%M')
+
+    diff = now - d
+    days = diff.days
+    months = days / 30
+    years = days / 365
+    seconds = diff.seconds
+    minutes = seconds / 60
+    hours = seconds / 3600
+    value, name = (
+        (years, 'year') if years else
+        (months, 'month') if months else
+        (days, 'day') if days else
+        (hours, 'hour') if hours else
+        (minutes, 'minute') if minutes else
+        (seconds, 'second'))
+    relative = '{0} {1}{2} ago'.format(value, name, 's' if value > 1 else '')
+
+    return breve.tags.html.tags.span(class_='date', title=relative)[absolute]
+
+
+_size_units = ['', 'K', 'M', 'G', 'T', 'P']
+
+
+@breve_global
+def format_size(size):
+    idx = 0
+    rest = 0
+    while True:
+        nextsize, nextrest = divmod(size, 1024)
+        if not nextsize:
+            break
+        idx += 1
+        size, rest = nextsize, nextrest
+    if rest > 5:
+        format = '{:.3} {}byte{}'
+        size += rest / 1024.
+    else:
+        format = '{} {}byte{}'
+    return format.format(size, _size_units[idx], 's' if size > 1 else '')
+    # Note: in french, units are taking a 's' if it is >= 2
 
 
 breve.register_global('urlescape', urllib.quote)
