@@ -128,8 +128,9 @@ def edit(localfile_path, header, file_path, method,
     rendered = lib.render_content(content)
     if content is not None and method == 'POST':
         if not rendered['error_count'] and not preview:
-            with open(localfile_path, 'wb') as fp:
-                fp.write(content)
+            file = lib.File(localfile_path)
+            file.save()
+            file.content = content
             header['status'] = '302 Found'
             header['Location'] = file_path
             return ''
@@ -141,6 +142,10 @@ def edit(localfile_path, header, file_path, method,
 
 
 @command
+def history(localfile_path, **_):
+    return {'file': lib.File(localfile_path)}
+
+
 @command
 def static(header, arguments, **_):
     file_path = arguments[1]

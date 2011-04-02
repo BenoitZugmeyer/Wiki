@@ -5,7 +5,7 @@ import history
 from breveextra import render_template
 from rstextra import render_content
 
-
+from history import File
 html_escape_table = {
     "&": "&amp;",
     '"': "&quot;",

@@ -21,10 +21,10 @@ json_decode = json.JSONDecoder().raw_decode
 
 
 class HistoryEntry(object):
-
-    content = ''
     uname = None
+    mtime = None
     size = None
+    content = None
 
 
 class _HistoryEntry(HistoryEntry):
@@ -32,45 +32,44 @@ class _HistoryEntry(HistoryEntry):
     def __init__(self, tar, infos):
         self._infos = infos
         self._tar = tar
-
-    def __getattr__(self, key):
-        return getattr(self._infos, key)
+        self.uname = infos.uname
+        self.mtime = infos.mtime
+        self.size = infos.size
 
     @property
     def content(self):
-        return zlib.decompress(self._tar.extractfile(self._infos).read())
+        #return zlib.decompress(self._tar.extractfile(self._infos).read())
+        return self._tar.extractfile(self._infos).read()
 
 
 class History(object):
 
-    def __init__(self, file):
-        self._file = file
-        self._cached_index = None
-        self._tar = None
+    def __init__(self, path):
+        self._path = path
+        if os.path.isfile(path):
+            self._tar = tarfile.TarFile(path, 'r')
+            self._files_iter = reversed(self._tar.getmembers())
+        else:
+            self._tar = False
+            self._files_iter = iter([])
 
-    def __enter__(self):
-        self._tar = tarfile.TarFile(self._file.hash_path, 'r')
-        self._files_iter = reversed(self._tar.getmembers())
-        return self
-
-    def __exit__(self, *args):
-        self._tar.close()
+    def __del__(self):
+        if self._tar:
+            self._tar.close()
 
     def __iter__(self):
         return self
 
     def append(self, entry):
-        assert isinstance(entry, HistoryEntry)
-
         content = entry.content
         infos = tarfile.TarInfo(hex(zlib.crc32(content)))
-        content = zlib.compress(content)
+        #content = zlib.compress(content)
         infos.size = len(content)
         infos.uname = entry.uname or '-'
-        infos.mtime = time.time()
+        infos.mtime = entry.mtime
         content = StringIO.StringIO(content)
 
-        with tarfile.TarFile(self._file.hash_path, 'a') as tar:
+        with tarfile.TarFile(self._path, 'a') as tar:
             tar.addfile(infos, content)
 
     def next(self):
@@ -78,7 +77,7 @@ class History(object):
         return _HistoryEntry(self._tar, infos)
 
 
-class File(object):
+class File(HistoryEntry):
     def __init__(self, name):
         self._name_hash = hashlib.sha1(name).hexdigest()
         self._name = name
@@ -95,9 +94,7 @@ class File(object):
             f.write(content)
 
     def save(self):
-        entry = HistoryEntry()
-        entry.content = self.content
-        History(self).append(entry)
+        self.history().append(self)
 
     @property
     def path(self):
@@ -111,8 +108,16 @@ class File(object):
     def hash(self):
         return hashlib.sha1(self.content).digest()
 
+    @property
+    def mtime(self):
+        return int(os.path.getmtime(self.path))
+
+    @property
+    def size(self):
+        return os.path.getsize(self.path)
+
     def history(self):
-        return History(file)
+        return History(self.hash_path)
 
     def delete():
         os.delete(self.path)
@@ -141,13 +146,12 @@ if __name__ == '__main__':
 
     last_content = file.content
 
-    with file.history() as h:
-        i = 3
-        for hi in h:
-            i -= 1
-            print 'Content from', hi.mtime
-            content = hi.content
-            print_diff(content, last_content)
-            last_content = content
-            if i == 0:
-                break
+    i = 3
+    for hi in file.history():
+        i -= 1
+        print 'Content from', hi.mtime
+        content = hi.content
+        print_diff(content, last_content)
+        last_content = content
+        if i == 0:
+            break
