@@ -36,7 +36,8 @@ def parse_input(environment):
     kwargs = {}
     parse_urlencoded(environment.get('QUERY_STRING', ''), args, kwargs)
     if environment['REQUEST_METHOD'] == 'POST':
-        parse_urlencoded(environment['wsgi.input'].read(), args, kwargs)
+        read = environment['wsgi.input'].read(int(environment.get('CONTENT_LENGTH', 0)))
+        parse_urlencoded(read, args, kwargs)
     return args, kwargs
 
 
