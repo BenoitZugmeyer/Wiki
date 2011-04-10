@@ -26,7 +26,11 @@ def url(file='', action=None):
         return file
     if isinstance(action, str):
         action = (action,)
-    action = '&'.join([urllib.quote(part) for part in action])
+    action = '&'.join([
+        '='.join([urllib.quote(str(p))
+            for p in (part if isinstance(part, tuple) else (part, ))
+        ])
+        for part in action])
     return '?'.join((file, action))
 
 

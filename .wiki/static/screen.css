@@ -52,7 +52,7 @@ body, select, input, textarea {
     font-size: 10pt;
     line-height: 1.4em;
 }
-.highlight, textarea { font-family: "DejaVu Sans Mono",
+.highlight, textarea, pre { font-family: "DejaVu Sans Mono",
              "Bitstream Vera Sans Mono",
              "Vera Sans Mono",
              "Lucida Console",

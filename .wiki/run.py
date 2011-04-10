@@ -12,7 +12,7 @@ import urlparse
 import mimetypes
 import re
 import traceback
-
+import difflib
 
 import lib
 
@@ -64,6 +64,7 @@ def application(environment, response):
         file_path=file_path,
         localfile_path=localfile_path,
         file_name=os.path.basename(localfile_path),
+        file_exists=os.path.isfile(localfile_path),
         method=method,
         arguments=command_args,
         **command_kwargs)
@@ -110,6 +111,11 @@ def command(fct):
 def get_command(name):
     return _commands.get(name)
 
+def parseint(i, default=None):
+    try:
+        return int(i)
+    except:
+        return default
 
 @command
 def error(message, exception=None, **_):
@@ -122,14 +128,15 @@ def view(localfile_path, **_):
 
 
 @command
-def edit(localfile_path, header, file_path, method,
+def edit(localfile_path, header, file_path, method, file_exists,
     content=None, preview=False, **_):
 
     rendered = lib.render_content(content)
     if content is not None and method == 'POST':
         if not rendered['error_count'] and not preview:
             file = lib.File(localfile_path)
-            file.save()
+            if file_exists:
+                file.save()
             file.content = content
             header['status'] = '302 Found'
             header['Location'] = file_path
@@ -142,9 +149,26 @@ def edit(localfile_path, header, file_path, method,
 
 
 @command
-def history(localfile_path, **_):
-    return {'file': lib.File(localfile_path)}
+def history(localfile_path, file_exists, new=None, old=None, see=None, **_):
+    if not file_exists:
+        return run('error', message='File not found', **_)
 
+    see, new, old = parseint(see), parseint(new), parseint(old)
+    file = lib.File(localfile_path)
+    history = file.history()
+    result = {'file': file, 'history': history, 'see': see, 'old': old, 'new': new}
+    if see is not None:
+        history_file = history[see] if see else file
+        result.update(lib.render_content(history_file.content))
+        result['history_file'] = history_file
+    if new is not None and old is not None:
+        old_content, new_content = [
+            (history[i] if i else file).content.split('\n')
+            for i in (old, new)]
+        result['diff_content'] = ''.join([
+            s if len(s) and s[-1] == '\n' else s + '\n'
+            for s in difflib.unified_diff(old_content, new_content)])
+    return result
 
 @command
 def static(header, arguments, **_):

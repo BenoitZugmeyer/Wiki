@@ -6,7 +6,9 @@ inherits ( 'global' ) [
         include ('display_file')
     ],
     override ( 'menu' ) [
-        a (href=url(file_path, 'edit')) [ 'Edit' ], ' ︲ ',
-        a (href=url(file_path, 'history')) [ 'History' ],
+        a (href=url(file_path, 'edit')) [
+            'Edit' if file_exists else 'Create' ],
+        test(file_exists) and [
+            ' ︲ ', a (href=url(file_path, 'history')) [ 'History' ]],
     ]
 ]

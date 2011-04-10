@@ -48,17 +48,28 @@ class History(object):
         self._path = path
         if os.path.isfile(path):
             self._tar = tarfile.TarFile(path, 'r')
-            self._files_iter = reversed(self._tar.getmembers())
+            self._members = self._tar.getmembers()
+            self._length = len(self._members)
         else:
             self._tar = False
-            self._files_iter = iter([])
+            self._length = 0
 
     def __del__(self):
         if self._tar:
             self._tar.close()
 
     def __iter__(self):
+        if self._tar:
+            self._files_iter = reversed(self._members)
+        else:
+            self._files_iter = iter([])
         return self
+
+    def __len__(self):
+        return self._length
+
+    def __getitem__(self, idx):
+        return _HistoryEntry(self._tar, self._members[-idx])
 
     def append(self, entry):
         content = entry.content
